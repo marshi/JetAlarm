@@ -5,19 +5,27 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Card
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -27,10 +35,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.Role.Companion.Image
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.ExperimentalUnitApi
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import dev.marshi.jetalarm.ui.model.Alarm
 
 @OptIn(
     ExperimentalUnitApi::class,
@@ -38,21 +49,34 @@ import androidx.compose.ui.unit.sp
     ExperimentalAnimationApi::class
 )
 @Composable
-fun AlarmCard(modifier: Modifier = Modifier) {
-
-    val state by remember { mutableStateOf(AlarmCardState()) }
+fun AlarmCard(
+    modifier: Modifier = Modifier,
+    alarm: Alarm,
+    initialExpanded: Boolean = false,
+    backgroundColor: Color = MaterialTheme.colors.surface,
+    onDelete: () -> Unit
+) {
+    val state by remember {
+        mutableStateOf(
+            AlarmCardState(alarm = alarm, initialExpanded = initialExpanded)
+        )
+    }
 
     Card(
         modifier = modifier
             .fillMaxWidth()
             .wrapContentHeight(),
+        shape = RoundedCornerShape(16.dp),
         indication = rememberRipple(),
+        backgroundColor = backgroundColor,
         onClick = {
             state.toggleExpand()
         }
     ) {
-        Column() {
-            Text("9:00", fontSize = 64.sp)
+        Column(
+            modifier = Modifier.padding(horizontal = 16.dp)
+        ) {
+            Text(text = alarm.time, fontSize = 64.sp)
             Row {
                 Text(text = "月")
                 Text(text = "水")
@@ -79,6 +103,12 @@ fun AlarmCard(modifier: Modifier = Modifier) {
                     }
                     Text("aiueo")
                     Text("aiueo")
+                    IconButton(onClick = onDelete) {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = "delete this alarm"
+                        )
+                    }
                 }
             }
         }
@@ -109,12 +139,13 @@ fun DayOfWeekButton(
 }
 
 data class AlarmCardState(
-    val text: String = "",
+    val alarm: Alarm,
+    val initialExpanded: Boolean = false
 ) {
 
     private val dayOfWeekEnable = mutableStateListOf(*List(7) { false }.toTypedArray())
 
-    private var expand by mutableStateOf(false)
+    private var expand by mutableStateOf(initialExpanded)
 
     fun dayOfWeekActive(index: Int) = dayOfWeekEnable[index]
 
@@ -132,10 +163,16 @@ data class AlarmCardState(
     }
 }
 
-@Preview
+@Preview(name = "shrink")
 @Composable
-fun AlarmCardPreview() {
-    AlarmCard()
+fun AlarmCardPreview1() {
+    AlarmCard(alarm = Alarm(time = "9:00"), initialExpanded = false, onDelete = {})
+}
+
+@Preview(name = "expand")
+@Composable
+fun AlarmCardPreview2() {
+    AlarmCard(alarm = Alarm(time = "9:00"), initialExpanded = true, onDelete = {})
 }
 
 @Preview
