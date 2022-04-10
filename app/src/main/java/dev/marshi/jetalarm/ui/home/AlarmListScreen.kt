@@ -16,7 +16,6 @@ import dev.marshi.jetalarm.ui.model.Alarm
 
 @Composable
 fun AlarmListScreen() {
-
     val state = remember {
         mutableStateListOf(
             Alarm(time = "9:00"),
