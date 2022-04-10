@@ -1,4 +1,4 @@
-package dev.marshi.jetalarm.ui
+package dev.marshi.jetalarm.ui.home
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,11 +12,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import dev.marshi.jetalarm.ui.home.AlarmCard
+import androidx.hilt.navigation.compose.hiltViewModel
 import dev.marshi.jetalarm.ui.model.Alarm
 
 @Composable
-fun AlarmListScreen() {
+fun AlarmListScreen(vm: AlarmViewModel = hiltViewModel()) {
     val state = remember {
         mutableStateListOf(
             Alarm(time = "9:00"),
