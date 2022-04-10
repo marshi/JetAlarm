@@ -1,4 +1,4 @@
-package dev.marshi.jetalarm.ui
+package dev.marshi.jetalarm.ui.home
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
