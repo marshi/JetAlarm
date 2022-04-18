@@ -76,7 +76,7 @@ fun AlarmCard(
         Column(
             modifier = Modifier.padding(horizontal = 16.dp)
         ) {
-            Text(text = alarm.time, fontSize = 64.sp)
+            Text(text = alarm.timeStr, fontSize = 64.sp)
             Row {
                 Text(text = "月")
                 Text(text = "水")
@@ -166,13 +166,13 @@ data class AlarmCardState(
 @Preview(name = "shrink")
 @Composable
 fun AlarmCardPreview1() {
-    AlarmCard(alarm = Alarm(time = "9:00"), initialExpanded = false, onDelete = {})
+    AlarmCard(alarm = Alarm(id = 0L, hour = 9, minute = 0), initialExpanded = false, onDelete = {})
 }
 
 @Preview(name = "expand")
 @Composable
 fun AlarmCardPreview2() {
-    AlarmCard(alarm = Alarm(time = "9:00"), initialExpanded = true, onDelete = {})
+    AlarmCard(alarm = Alarm(id = 0, hour = 9, minute = 0), initialExpanded = true, onDelete = {})
 }
 
 @Preview

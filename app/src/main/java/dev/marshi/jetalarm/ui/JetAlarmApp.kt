@@ -1,6 +1,10 @@
 package dev.marshi.jetalarm.ui
 
+import androidx.compose.material.FloatingActionButton
+import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.compositionLocalOf
@@ -10,6 +14,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import dev.marshi.jetalarm.ui.home.AlarmListScreen
 import dev.marshi.jetalarm.ui.log.LogScreen
+import dev.marshi.jetalarm.ui.main.MainScreen
+import dev.marshi.jetalarm.ui.main.MainViewModel
 import dev.marshi.jetalarm.ui.theme.JetAlarmTheme
 
 @Composable
@@ -17,11 +23,7 @@ fun JetAlarmApp() {
     JetAlarmTheme {
         val navController = rememberNavController()
         CompositionLocalProvider(LocalNavigator provides navController) {
-            Scaffold(
-                bottomBar = { JetAlarmBottomBar(Nav.navs) },
-            ) {
-                JetAlarmNavHost(navController = navController)
-            }
+            MainScreen(navController = navController)
         }
     }
 }
@@ -30,11 +32,12 @@ val LocalNavigator = compositionLocalOf<NavHostController> { error("navigation n
 
 @Composable
 fun JetAlarmNavHost(
+    mainViewModel: MainViewModel,
     navController: NavHostController,
 ) {
     NavHost(navController = navController, startDestination = "home") {
         composable("home") {
-            AlarmListScreen()
+            AlarmListScreen(mainViewModel = mainViewModel)
         }
         composable("log") { LogScreen() }
     }

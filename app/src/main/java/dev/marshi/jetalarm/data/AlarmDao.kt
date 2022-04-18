@@ -1,18 +1,24 @@
 package dev.marshi.jetalarm.data
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Update
+import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface AlarmDao: AlarmRepository {
+interface AlarmDao {
 
     @Insert
-    override suspend fun insert(entity: AlarmEntity)
+    suspend fun insert(entity: AlarmEntity)
 
-    @Insert
-    override suspend fun update(entity: AlarmEntity)
+    @Update
+    suspend fun update(entity: AlarmEntity)
 
-    @Query("select * from AlarmEntity")
-    override suspend fun list(): List<AlarmEntity>
+    @Delete
+    suspend fun delete(entity: AlarmEntity)
+
+    @Query("select * from AlarmEntity order by inserted_at desc")
+    fun list(): Flow<List<AlarmEntity>>
 }
