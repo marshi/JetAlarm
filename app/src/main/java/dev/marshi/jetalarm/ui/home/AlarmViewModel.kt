@@ -33,19 +33,6 @@ class AlarmViewModel @Inject constructor(
         }
     }
 
-    fun scrollToTop() {
-        _state.update {
-            it.copy(scroll = it.scroll + Event.Scroll())
-        }
-    }
-
-    fun scrolled(id: Long) {
-        val scrolls = state.value.scroll.filterNot { it.id == id }
-        _state.update {
-            it.copy(scroll = scrolls)
-        }
-    }
-
     fun add(alarm: Alarm) {
         viewModelScope.launch {
             alarmRepository.insert(alarm)
