@@ -14,39 +14,29 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import dev.marshi.jetalarm.ui.main.AddAlarm
-import dev.marshi.jetalarm.ui.main.MainViewModel
 import dev.marshi.jetalarm.ui.model.Alarm
 
 @Composable
 fun AlarmListScreen(
     viewModel: AlarmViewModel = hiltViewModel(),
-    mainViewModel: MainViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsState()
-    val mainState by mainViewModel.state.collectAsState()
 
     Surface {
         AlarmList(
             alarms = state.alarms,
-            addAlarms = mainState.addAlarms,
             onDelete = { alarm ->
                 viewModel.remove(alarm)
             },
-            onAdded = { addAlarm ->
-                viewModel.add(addAlarm.alarm)
-                mainViewModel.added(addAlarm.id)
-            }
         )
     }
 }
@@ -54,16 +44,19 @@ fun AlarmListScreen(
 @Composable
 fun AlarmList(
     alarms: List<Alarm>,
-    addAlarms: List<AddAlarm>,
     onDelete: (alarm: Alarm) -> Unit,
-    onAdded: (AddAlarm) -> Unit,
 ) {
     val lazyListState = rememberLazyListState()
-    addAlarms.forEach { addAlarm ->
-        onAdded(addAlarm)
+    var prevSize = remember { alarms.size }
+
+    val isAdded by derivedStateOf {
+        val isAdded = prevSize < alarms.size
+        prevSize = alarms.size
+        return@derivedStateOf isAdded
     }
-    LaunchedEffect(addAlarms) {
-        addAlarms.firstOrNull().let { addAlarm ->
+
+    LaunchedEffect(alarms) {
+        if (isAdded) {
             lazyListState.animateScrollToItem(0)
         }
     }
@@ -91,34 +84,29 @@ fun AlarmList(
 @Preview
 @Composable
 fun AlarmListPreview() {
-    var alarms = remember {
+    val alarms = remember {
         mutableStateListOf(
             Alarm(id = 1, hour = 9, minute = 0),
             Alarm(id = 2, hour = 10, minute = 0),
             Alarm(id = 3, hour = 11, minute = 0),
         )
     }
-    var addAlarms by remember { mutableStateOf(listOf<AddAlarm>()) }
     Scaffold(
         floatingActionButton = {
-            FloatingActionButton(onClick = {
-                addAlarms = addAlarms + AddAlarm(alarm = Alarm(hour = 10, minute = 20))
-            }) {
+            FloatingActionButton(
+                onClick = {
+                    alarms.add(Alarm.now())
+                }
+            ) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = null)
             }
         }
     ) {
-        println(alarms)
         AlarmList(
             alarms = alarms,
-            addAlarms = addAlarms,
             onDelete = {
                 alarms.removeAt(alarms.indexOf(it))
             },
-            onAdded = { addAlarm ->
-                alarms.add(addAlarm.alarm)
-                addAlarms = addAlarms.filterNot { it.id == addAlarm.id }
-            }
         )
     }
 }

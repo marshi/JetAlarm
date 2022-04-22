@@ -32,12 +32,11 @@ val LocalNavigator = compositionLocalOf<NavHostController> { error("navigation n
 
 @Composable
 fun JetAlarmNavHost(
-    mainViewModel: MainViewModel,
     navController: NavHostController,
 ) {
     NavHost(navController = navController, startDestination = "home") {
         composable("home") {
-            AlarmListScreen(mainViewModel = mainViewModel)
+            AlarmListScreen()
         }
         composable("log") { LogScreen() }
     }

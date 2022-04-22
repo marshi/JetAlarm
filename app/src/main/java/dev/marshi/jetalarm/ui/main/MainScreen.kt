@@ -29,6 +29,6 @@ fun MainScreen(
             }
         }
     ) {
-        JetAlarmNavHost(navController = navController, mainViewModel = viewModel)
+        JetAlarmNavHost(navController = navController)
     }
 }
