@@ -1,11 +1,15 @@
 package dev.marshi.jetalarm.ui.home
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.marshi.jetalarm.data.AlarmRepository
+import dev.marshi.jetalarm.ui.model.Alarm
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -14,10 +18,24 @@ class AlarmViewModel @Inject constructor(
     private val alarmRepository: AlarmRepository,
 ) : ViewModel() {
 
-    fun i() {
+    private val _state = MutableStateFlow(AlarmListState())
+    val state = _state.asStateFlow()
+
+    init {
+        alarmRepository.list().onEach { alarms ->
+            _state.update { it.copy(alarms = alarms) }
+        }.launchIn(viewModelScope)
+    }
+
+    fun remove(alarm: Alarm) {
         viewModelScope.launch {
-            val i = alarmRepository.list()
-            println(i)
+            alarmRepository.remove(alarm)
+        }
+    }
+
+    fun add(alarm: Alarm) {
+        viewModelScope.launch {
+            alarmRepository.insert(alarm)
         }
     }
 }
