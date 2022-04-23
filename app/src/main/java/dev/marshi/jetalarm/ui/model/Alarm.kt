@@ -31,11 +31,12 @@ data class Alarm(
 
     private val localTime = LocalTime.of(hour, minute)
 
-    val timeStr = localTime.format(formatter)
+    val timeStr: String = localTime.format(formatter)
 
     fun toEntity(): AlarmEntity {
         val now = Date().time
         return AlarmEntity(
+            id = id,
             hour = hour,
             minute = minute,
             insertedAt = now,

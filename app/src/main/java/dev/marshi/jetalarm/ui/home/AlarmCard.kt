@@ -55,7 +55,8 @@ fun AlarmCard(
     initialExpanded: Boolean = false,
     backgroundColor: Color = MaterialTheme.colors.surface,
     onClick: (Boolean) -> Unit,
-    onDelete: () -> Unit
+    onDelete: () -> Unit,
+    onTimeSet: (Alarm) -> Unit,
 ) {
     val state by remember {
         mutableStateOf(
@@ -80,7 +81,13 @@ fun AlarmCard(
             modifier = Modifier.padding(horizontal = 16.dp)
         ) {
             TextButton(onClick = {
-                showTimePicker(context = context, hour = alarm.hour, minute = alarm.minute)
+                showTimePicker(
+                    context = context,
+                    hour = alarm.hour,
+                    minute = alarm.minute,
+                    onTimeSet = { _, hour, minute ->
+                        onTimeSet(alarm.copy(hour = hour, minute = minute))
+                    })
             }) {
                 Text(text = alarm.timeStr, fontSize = 64.sp)
             }
@@ -177,7 +184,9 @@ fun AlarmCardPreview1() {
         alarm = Alarm(id = 0L, hour = 9, minute = 0),
         initialExpanded = false,
         onDelete = {},
-        onClick = {})
+        onClick = {},
+        onTimeSet = {}
+    )
 }
 
 @Preview(name = "expand")
@@ -187,7 +196,9 @@ fun AlarmCardPreview2() {
         alarm = Alarm(id = 0, hour = 9, minute = 0),
         initialExpanded = true,
         onDelete = {},
-        onClick = {})
+        onClick = {},
+        onTimeSet = {}
+    )
 }
 
 @Preview
@@ -201,6 +212,6 @@ fun DayOfWeekButtonPreview() {
         active = state,
         onClick = {
             state = !state
-        }
+        },
     )
 }

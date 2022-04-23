@@ -13,9 +13,9 @@ class MainViewModel @Inject constructor(
     private val alarmRepository: AlarmRepository
 ) : ViewModel() {
 
-    fun addAlarm() {
+    fun addAlarm(hour: Int, minute: Int) {
         viewModelScope.launch {
-            alarmRepository.insert(Alarm.now())
+            alarmRepository.insert(Alarm(hour = hour, minute = minute))
         }
     }
 }

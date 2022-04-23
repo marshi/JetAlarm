@@ -30,13 +30,23 @@ fun AlarmListScreen(
     viewModel: AlarmViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsState()
+    var prevSize = remember { state.alarms.size }
+    val isAdded by derivedStateOf {
+        val isAdded = prevSize < state.alarms.size
+        prevSize = state.alarms.size
+        return@derivedStateOf isAdded
+    }
 
     Surface {
         AlarmList(
             alarms = state.alarms,
+            scrollToTop = isAdded,
             onDelete = { alarm ->
                 viewModel.remove(alarm)
             },
+            onTimeSet = { alarm ->
+                viewModel.update(alarm)
+            }
         )
     }
 }
@@ -44,20 +54,15 @@ fun AlarmListScreen(
 @Composable
 fun AlarmList(
     alarms: List<Alarm>,
+    scrollToTop: Boolean,
     onDelete: (alarm: Alarm) -> Unit,
+    onTimeSet: (Alarm) -> Unit,
 ) {
     val lazyListState = rememberLazyListState()
-    var prevSize = remember { alarms.size }
-    val isExpandedSet = remember { mutableSetOf<Int>() }
-
-    val isAdded by derivedStateOf {
-        val isAdded = prevSize < alarms.size
-        prevSize = alarms.size
-        return@derivedStateOf isAdded
-    }
+    val isExpandedSet = remember { mutableSetOf<Long>() }
 
     LaunchedEffect(alarms) {
-        if (isAdded) {
+        if (scrollToTop) {
             lazyListState.animateScrollToItem(0)
         }
     }
@@ -73,17 +78,18 @@ fun AlarmList(
                 AlarmCard(
                     alarm = alarm,
                     backgroundColor = Color.Gray,
-                    initialExpanded = isExpandedSet.contains(index),
+                    initialExpanded = isExpandedSet.contains(alarm.id),
                     onClick = { isExpanded ->
                         if (isExpanded) {
-                            isExpandedSet.add(index)
+                            isExpandedSet.add(alarm.id)
                         } else {
-                            isExpandedSet.remove(index)
+                            isExpandedSet.remove(alarm.id)
                         }
                     },
                     onDelete = {
                         onDelete(alarm)
-                    }
+                    },
+                    onTimeSet = onTimeSet
                 )
             }
         }
@@ -113,9 +119,11 @@ fun AlarmListPreview() {
     ) {
         AlarmList(
             alarms = alarms,
+            scrollToTop = false,
             onDelete = {
                 alarms.removeAt(alarms.indexOf(it))
             },
+            onTimeSet = {}
         )
     }
 }

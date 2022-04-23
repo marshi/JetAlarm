@@ -17,7 +17,7 @@ fun JetAlarmApp() {
     JetAlarmTheme {
         val navController = rememberNavController()
         CompositionLocalProvider(LocalNavigator provides navController) {
-            MainScreen(navController = navController)
+            MainScreen()
         }
     }
 }

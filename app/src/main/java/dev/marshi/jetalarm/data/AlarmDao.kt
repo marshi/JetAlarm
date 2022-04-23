@@ -21,4 +21,7 @@ interface AlarmDao {
 
     @Query("select * from AlarmEntity order by inserted_at desc")
     fun list(): Flow<List<AlarmEntity>>
+
+    @Query("select * from AlarmEntity where id = :id")
+    fun find(id: Long): AlarmEntity?
 }
