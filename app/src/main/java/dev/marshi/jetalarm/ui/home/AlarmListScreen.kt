@@ -48,6 +48,7 @@ fun AlarmList(
 ) {
     val lazyListState = rememberLazyListState()
     var prevSize = remember { alarms.size }
+    val isExpandedSet = remember { mutableSetOf<Int>() }
 
     val isAdded by derivedStateOf {
         val isAdded = prevSize < alarms.size
@@ -72,6 +73,14 @@ fun AlarmList(
                 AlarmCard(
                     alarm = alarm,
                     backgroundColor = Color.Gray,
+                    initialExpanded = isExpandedSet.contains(index),
+                    onClick = { isExpanded ->
+                        if (isExpanded) {
+                            isExpandedSet.add(index)
+                        } else {
+                            isExpandedSet.remove(index)
+                        }
+                    },
                     onDelete = {
                         onDelete(alarm)
                     }

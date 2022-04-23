@@ -5,7 +5,6 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -35,8 +34,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.semantics.Role.Companion.Image
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.ExperimentalUnitApi
 import androidx.compose.ui.unit.dp
@@ -54,6 +51,7 @@ fun AlarmCard(
     alarm: Alarm,
     initialExpanded: Boolean = false,
     backgroundColor: Color = MaterialTheme.colors.surface,
+    onClick: (Boolean) -> Unit,
     onDelete: () -> Unit
 ) {
     val state by remember {
@@ -71,6 +69,7 @@ fun AlarmCard(
         backgroundColor = backgroundColor,
         onClick = {
             state.toggleExpand()
+            onClick(state.isExpanded())
         }
     ) {
         Column(
@@ -166,13 +165,21 @@ data class AlarmCardState(
 @Preview(name = "shrink")
 @Composable
 fun AlarmCardPreview1() {
-    AlarmCard(alarm = Alarm(id = 0L, hour = 9, minute = 0), initialExpanded = false, onDelete = {})
+    AlarmCard(
+        alarm = Alarm(id = 0L, hour = 9, minute = 0),
+        initialExpanded = false,
+        onDelete = {},
+        onClick = {})
 }
 
 @Preview(name = "expand")
 @Composable
 fun AlarmCardPreview2() {
-    AlarmCard(alarm = Alarm(id = 0, hour = 9, minute = 0), initialExpanded = true, onDelete = {})
+    AlarmCard(
+        alarm = Alarm(id = 0, hour = 9, minute = 0),
+        initialExpanded = true,
+        onDelete = {},
+        onClick = {})
 }
 
 @Preview
