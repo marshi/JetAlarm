@@ -17,7 +17,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
@@ -30,17 +32,11 @@ fun AlarmListScreen(
     viewModel: AlarmViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsState()
-    var prevSize = remember { state.alarms.size }
-    val isAdded by derivedStateOf {
-        val isAdded = prevSize < state.alarms.size
-        prevSize = state.alarms.size
-        return@derivedStateOf isAdded
-    }
+
 
     Surface {
         AlarmList(
             alarms = state.alarms,
-            scrollToTop = isAdded,
             onDelete = { alarm ->
                 viewModel.remove(alarm)
             },
@@ -54,15 +50,20 @@ fun AlarmListScreen(
 @Composable
 fun AlarmList(
     alarms: List<Alarm>,
-    scrollToTop: Boolean,
     onDelete: (alarm: Alarm) -> Unit,
     onTimeSet: (Alarm) -> Unit,
 ) {
     val lazyListState = rememberLazyListState()
     val isExpandedSet = remember { mutableSetOf<Long>() }
+    var prevSize by remember { mutableStateOf(alarms.size) }
+    val isAdded by derivedStateOf {
+        val isAdded = prevSize < alarms.size
+        prevSize = alarms.size
+        return@derivedStateOf isAdded
+    }
 
     LaunchedEffect(alarms) {
-        if (scrollToTop) {
+        if (isAdded) {
             lazyListState.animateScrollToItem(0)
         }
     }
@@ -119,7 +120,7 @@ fun AlarmListPreview() {
     ) {
         AlarmList(
             alarms = alarms,
-            scrollToTop = false,
+//            scrollToTop = false,
             onDelete = {
                 alarms.removeAt(alarms.indexOf(it))
             },
