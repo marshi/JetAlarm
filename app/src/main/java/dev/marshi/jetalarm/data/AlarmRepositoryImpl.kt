@@ -17,7 +17,11 @@ class AlarmRepositoryImpl @Inject constructor(
         dao.insert(entity = entity)
     }
 
-    override suspend fun update(entity: AlarmEntity) = withContext(Dispatchers.IO) {
+    override suspend fun update(alarm: Alarm) = withContext(Dispatchers.IO) {
+        val entity = dao.find(alarm.id)?.copy(
+            hour = alarm.hour,
+            minute = alarm.minute
+        ) ?: return@withContext
         dao.update(entity)
     }
 
@@ -25,6 +29,12 @@ class AlarmRepositoryImpl @Inject constructor(
         return dao.list().map {
             it.map { entity -> Alarm.from(entity) }
         }.flowOn(Dispatchers.IO)
+    }
+
+    override fun find(id: Long): Alarm? {
+        return dao.find(id)?.let { entity ->
+            Alarm.from(entity)
+        }
     }
 
     override suspend fun remove(alarm: Alarm) = withContext(Dispatchers.IO) {

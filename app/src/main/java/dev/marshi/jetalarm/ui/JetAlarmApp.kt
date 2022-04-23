@@ -1,10 +1,5 @@
 package dev.marshi.jetalarm.ui
 
-import androidx.compose.material.FloatingActionButton
-import androidx.compose.material.Icon
-import androidx.compose.material.Scaffold
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.compositionLocalOf
@@ -15,7 +10,6 @@ import androidx.navigation.compose.rememberNavController
 import dev.marshi.jetalarm.ui.home.AlarmListScreen
 import dev.marshi.jetalarm.ui.log.LogScreen
 import dev.marshi.jetalarm.ui.main.MainScreen
-import dev.marshi.jetalarm.ui.main.MainViewModel
 import dev.marshi.jetalarm.ui.theme.JetAlarmTheme
 
 @Composable
@@ -23,7 +17,7 @@ fun JetAlarmApp() {
     JetAlarmTheme {
         val navController = rememberNavController()
         CompositionLocalProvider(LocalNavigator provides navController) {
-            MainScreen(navController = navController)
+            MainScreen()
         }
     }
 }

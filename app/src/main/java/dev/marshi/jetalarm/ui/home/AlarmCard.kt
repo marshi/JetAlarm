@@ -23,6 +23,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.ripple.rememberRipple
@@ -34,10 +35,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.ExperimentalUnitApi
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import dev.marshi.jetalarm.ui.editalarm.showTimePicker
 import dev.marshi.jetalarm.ui.model.Alarm
 
 @OptIn(
@@ -52,13 +55,15 @@ fun AlarmCard(
     initialExpanded: Boolean = false,
     backgroundColor: Color = MaterialTheme.colors.surface,
     onClick: (Boolean) -> Unit,
-    onDelete: () -> Unit
+    onDelete: () -> Unit,
+    onTimeSet: (Alarm) -> Unit,
 ) {
     val state by remember {
         mutableStateOf(
             AlarmCardState(alarm = alarm, initialExpanded = initialExpanded)
         )
     }
+    val context = LocalContext.current
 
     Card(
         modifier = modifier
@@ -75,7 +80,17 @@ fun AlarmCard(
         Column(
             modifier = Modifier.padding(horizontal = 16.dp)
         ) {
-            Text(text = alarm.timeStr, fontSize = 64.sp)
+            TextButton(onClick = {
+                showTimePicker(
+                    context = context,
+                    hour = alarm.hour,
+                    minute = alarm.minute,
+                    onTimeSet = { _, hour, minute ->
+                        onTimeSet(alarm.copy(hour = hour, minute = minute))
+                    })
+            }) {
+                Text(text = alarm.timeStr, fontSize = 64.sp)
+            }
             Row {
                 Text(text = "月")
                 Text(text = "水")
@@ -169,7 +184,9 @@ fun AlarmCardPreview1() {
         alarm = Alarm(id = 0L, hour = 9, minute = 0),
         initialExpanded = false,
         onDelete = {},
-        onClick = {})
+        onClick = {},
+        onTimeSet = {}
+    )
 }
 
 @Preview(name = "expand")
@@ -179,7 +196,9 @@ fun AlarmCardPreview2() {
         alarm = Alarm(id = 0, hour = 9, minute = 0),
         initialExpanded = true,
         onDelete = {},
-        onClick = {})
+        onClick = {},
+        onTimeSet = {}
+    )
 }
 
 @Preview
@@ -193,6 +212,6 @@ fun DayOfWeekButtonPreview() {
         active = state,
         onClick = {
             state = !state
-        }
+        },
     )
 }
