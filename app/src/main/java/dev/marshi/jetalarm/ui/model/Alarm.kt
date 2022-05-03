@@ -1,8 +1,9 @@
 package dev.marshi.jetalarm.ui.model
 
-import android.text.format.DateUtils
 import dev.marshi.jetalarm.data.AlarmEntity
-import java.sql.Timestamp
+import dev.marshi.jetalarm.extensions.dayOfWeekFrom
+import dev.marshi.jetalarm.extensions.toNumeric
+import java.time.DayOfWeek
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -11,6 +12,7 @@ data class Alarm(
     val id: Long = UUID.randomUUID().mostSignificantBits,
     val hour: Int = 0,
     val minute: Int = 0,
+    val dayOfWeek: Set<DayOfWeek> = emptySet(),
 ) {
     companion object {
         private val formatter = DateTimeFormatter.ofPattern("HH:mm")
@@ -25,6 +27,7 @@ data class Alarm(
                 id = entity.id,
                 hour = entity.hour,
                 minute = entity.minute,
+                dayOfWeek = dayOfWeekFrom(entity.dayOfWeek)
             )
         }
     }
@@ -41,6 +44,7 @@ data class Alarm(
             minute = minute,
             insertedAt = now,
             updatedAt = now,
+            dayOfWeek = dayOfWeek.toNumeric()
         )
     }
 }

@@ -29,7 +29,6 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -42,6 +41,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.marshi.jetalarm.ui.editalarm.showTimePicker
 import dev.marshi.jetalarm.ui.model.Alarm
+import java.time.DayOfWeek
+import java.time.format.TextStyle
+import java.util.*
 
 @OptIn(
     ExperimentalUnitApi::class,
@@ -56,14 +58,14 @@ fun AlarmCard(
     backgroundColor: Color = MaterialTheme.colors.surface,
     onClick: (Boolean) -> Unit,
     onDelete: () -> Unit,
+    onDayOfWeekButtonClick: (DayOfWeek, Boolean) -> Unit,
     onTimeSet: (Alarm) -> Unit,
 ) {
     val state by remember {
         mutableStateOf(
-            AlarmCardState(alarm = alarm, initialExpanded = initialExpanded)
+            AlarmCardState(initialExpanded = initialExpanded)
         )
     }
-    val context = LocalContext.current
 
     Card(
         modifier = modifier
@@ -80,17 +82,7 @@ fun AlarmCard(
         Column(
             modifier = Modifier.padding(horizontal = 16.dp)
         ) {
-            TextButton(onClick = {
-                showTimePicker(
-                    context = context,
-                    hour = alarm.hour,
-                    minute = alarm.minute,
-                    onTimeSet = { _, hour, minute ->
-                        onTimeSet(alarm.copy(hour = hour, minute = minute))
-                    })
-            }) {
-                Text(text = alarm.timeStr, fontSize = 64.sp)
-            }
+            AlarmTime(alarm = alarm, onTimeSet = onTimeSet)
             Row {
                 Text(text = "月")
                 Text(text = "水")
@@ -101,22 +93,10 @@ fun AlarmCard(
                 enter = fadeIn(animationSpec = tween(delayMillis = 300)) + expandVertically()
             ) {
                 Column {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceEvenly
-                    ) {
-                        listOf("月", "火", "水", "木", "金", "土", "日").forEachIndexed { i, dayOfWeek ->
-                            DayOfWeekButton(
-                                text = dayOfWeek,
-                                active = state.dayOfWeekActive(i),
-                                onClick = {
-                                    state.toggleEnable(i)
-                                }
-                            )
-                        }
-                    }
-                    Text("aiueo")
-                    Text("aiueo")
+                    DayOfWeeks(
+                        dayOfWeeks = alarm.dayOfWeek,
+                        onDayOfWeekClick = onDayOfWeekButtonClick,
+                    )
                     IconButton(onClick = onDelete) {
                         Icon(
                             imageVector = Icons.Default.Delete,
@@ -129,11 +109,15 @@ fun AlarmCard(
     }
 }
 
+interface DayOfWeekButtonListener {
+    fun onDayOfWeekButtonClick(dayOfWeek: DayOfWeek, active: Boolean)
+}
+
 @Composable
 fun DayOfWeekButton(
-    text: String,
+    dayOfWeek: DayOfWeek,
     active: Boolean,
-    onClick: () -> Unit
+    onClick: (DayOfWeek) -> Unit,
 ) {
     Button(
         modifier = Modifier.size(24.dp),
@@ -146,27 +130,62 @@ fun DayOfWeekButton(
                 Color.Gray
             }
         ),
-        onClick = onClick
+        onClick = { onClick(dayOfWeek) }
     ) {
-        Text(text = text, fontSize = 11.sp)
+        Text(text = dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.JAPANESE), fontSize = 11.sp)
+    }
+}
+
+interface DayOfWeeksListener : DayOfWeekButtonListener
+
+@Composable
+fun DayOfWeeks(
+    dayOfWeeks: Set<DayOfWeek>,
+    onDayOfWeekClick: (DayOfWeek, Boolean) -> Unit,
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceEvenly
+    ) {
+        DayOfWeek.values().forEachIndexed { i, dayOfWeek ->
+            DayOfWeekButton(
+                dayOfWeek = dayOfWeek,
+                active = dayOfWeeks.contains(dayOfWeek),
+                onClick = { dayOfWeek ->
+                    onDayOfWeekClick(
+                        dayOfWeek,
+                        !dayOfWeeks.contains(dayOfWeek)
+                    )
+                }
+            )
+        }
+    }
+}
+
+@Composable
+fun AlarmTime(
+    alarm: Alarm,
+    onTimeSet: (Alarm) -> Unit
+) {
+    val context = LocalContext.current
+    TextButton(onClick = {
+        showTimePicker(
+            context = context,
+            hour = alarm.hour,
+            minute = alarm.minute,
+            onTimeSet = { _, hour, minute ->
+                onTimeSet(alarm.copy(hour = hour, minute = minute))
+            })
+    }) {
+        Text(text = alarm.timeStr, fontSize = 64.sp)
     }
 }
 
 data class AlarmCardState(
-    val alarm: Alarm,
     val initialExpanded: Boolean = false
 ) {
 
-    private val dayOfWeekEnable = mutableStateListOf(*List(7) { false }.toTypedArray())
-
     private var expand by mutableStateOf(initialExpanded)
-
-    fun dayOfWeekActive(index: Int) = dayOfWeekEnable[index]
-
-    fun toggleEnable(index: Int) {
-        require(index in 0..6)
-        dayOfWeekEnable[index] = !dayOfWeekEnable[index]
-    }
 
     fun toggleExpand() {
         expand = !expand
@@ -185,6 +204,7 @@ fun AlarmCardPreview1() {
         initialExpanded = false,
         onDelete = {},
         onClick = {},
+        onDayOfWeekButtonClick = { _, _ -> },
         onTimeSet = {}
     )
 }
@@ -192,11 +212,18 @@ fun AlarmCardPreview1() {
 @Preview(name = "expand")
 @Composable
 fun AlarmCardPreview2() {
+    val alarm by remember {
+        mutableStateOf(
+            Alarm(id = 0, hour = 9, minute = 0)
+        )
+    }
+
     AlarmCard(
-        alarm = Alarm(id = 0, hour = 9, minute = 0),
+        alarm = alarm,
         initialExpanded = true,
         onDelete = {},
         onClick = {},
+        onDayOfWeekButtonClick = { _, _ -> },
         onTimeSet = {}
     )
 }
@@ -208,10 +235,8 @@ fun DayOfWeekButtonPreview() {
         mutableStateOf(false)
     }
     DayOfWeekButton(
-        text = "月",
+        dayOfWeek = DayOfWeek.MONDAY,
         active = state,
-        onClick = {
-            state = !state
-        },
+        onClick = { state = !state },
     )
 }

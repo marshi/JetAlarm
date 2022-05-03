@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.DayOfWeek
 import javax.inject.Inject
 
 @HiltViewModel
@@ -36,6 +37,19 @@ class AlarmViewModel @Inject constructor(
     fun add(alarm: Alarm) {
         viewModelScope.launch {
             alarmRepository.insert(alarm)
+        }
+    }
+
+    fun updateDayOfWeek(id: Long, dayOfWeek: DayOfWeek, active: Boolean) {
+        viewModelScope.launch {
+            val alarm = alarmRepository.find(id) ?: return@launch
+            val newDayOfWeek = if (active) {
+                alarm.dayOfWeek + dayOfWeek
+            } else {
+                alarm.dayOfWeek - dayOfWeek
+            }
+            val updateAlarm = alarm.copy(dayOfWeek = newDayOfWeek)
+            alarmRepository.update(updateAlarm)
         }
     }
 
