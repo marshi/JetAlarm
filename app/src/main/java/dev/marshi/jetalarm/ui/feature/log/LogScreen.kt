@@ -1,4 +1,4 @@
-package dev.marshi.jetalarm.ui.log
+package dev.marshi.jetalarm.ui.feature.log
 
 import androidx.compose.material.Surface
 import androidx.compose.material.Text

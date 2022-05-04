@@ -1,4 +1,4 @@
-package dev.marshi.jetalarm.ui.home
+package dev.marshi.jetalarm.ui.feature.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

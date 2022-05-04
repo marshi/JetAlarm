@@ -7,9 +7,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import dev.marshi.jetalarm.ui.home.AlarmListScreen
-import dev.marshi.jetalarm.ui.log.LogScreen
-import dev.marshi.jetalarm.ui.main.MainScreen
+import dev.marshi.jetalarm.ui.feature.home.AlarmListScreen
+import dev.marshi.jetalarm.ui.feature.log.LogScreen
+import dev.marshi.jetalarm.ui.feature.main.MainScreen
 import dev.marshi.jetalarm.ui.theme.JetAlarmTheme
 
 @Composable
