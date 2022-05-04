@@ -1,14 +1,13 @@
 package dev.marshi.jetalarm.ui
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.compositionLocalOf
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import dev.marshi.jetalarm.ui.feature.home.AlarmListScreen
-import dev.marshi.jetalarm.ui.feature.log.LogScreen
+import androidx.navigation.navDeepLink
+import dev.marshi.jetalarm.ui.feature.alarmresult.AlarmResultScreen
 import dev.marshi.jetalarm.ui.feature.main.MainScreen
 import dev.marshi.jetalarm.ui.theme.JetAlarmTheme
 
@@ -16,22 +15,22 @@ import dev.marshi.jetalarm.ui.theme.JetAlarmTheme
 fun JetAlarmApp() {
     JetAlarmTheme {
         val navController = rememberNavController()
-        CompositionLocalProvider(LocalNavigator provides navController) {
-            MainScreen()
+        NavHost(navController = navController, startDestination = "main") {
+            composable("main") {
+                MainScreen()
+            }
+            composable(
+                "alarm_result",
+                deepLinks = listOf(navDeepLink {
+                    uriPattern = "https://dev.marshi.jetalarm/alarmresult"
+                })
+            ) {
+                AlarmResultScreen()
+            }
         }
+
     }
 }
 
 val LocalNavigator = compositionLocalOf<NavHostController> { error("navigation not found") }
 
-@Composable
-fun JetAlarmNavHost(
-    navController: NavHostController,
-) {
-    NavHost(navController = navController, startDestination = "home") {
-        composable("home") {
-            AlarmListScreen()
-        }
-        composable("log") { LogScreen() }
-    }
-}
