@@ -13,6 +13,7 @@ data class Alarm(
     val hour: Int = 0,
     val minute: Int = 0,
     val dayOfWeek: Set<DayOfWeek> = emptySet(),
+    val isActive: Boolean = false,
 ) {
     companion object {
         private val formatter = DateTimeFormatter.ofPattern("HH:mm")
@@ -27,7 +28,8 @@ data class Alarm(
                 id = entity.id,
                 hour = entity.hour,
                 minute = entity.minute,
-                dayOfWeek = dayOfWeekFrom(entity.dayOfWeek)
+                dayOfWeek = dayOfWeekFrom(entity.dayOfWeek),
+                isActive = entity.active,
             )
         }
     }
@@ -44,7 +46,8 @@ data class Alarm(
             minute = minute,
             insertedAt = now,
             updatedAt = now,
-            dayOfWeek = dayOfWeek.toNumeric()
+            dayOfWeek = dayOfWeek.toNumeric(),
+            active = isActive
         )
     }
 }

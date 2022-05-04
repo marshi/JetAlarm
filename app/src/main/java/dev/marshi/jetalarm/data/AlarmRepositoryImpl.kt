@@ -23,6 +23,7 @@ class AlarmRepositoryImpl @Inject constructor(
             hour = alarm.hour,
             minute = alarm.minute,
             dayOfWeek = alarm.dayOfWeek.toNumeric(),
+            active = alarm.isActive,
         ) ?: return@withContext
         dao.update(entity)
     }

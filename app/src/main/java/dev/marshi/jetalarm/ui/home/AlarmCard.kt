@@ -22,6 +22,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Switch
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
@@ -57,6 +58,7 @@ fun AlarmCard(
     initialExpanded: Boolean = false,
     backgroundColor: Color = MaterialTheme.colors.surface,
     onClick: (Boolean) -> Unit,
+    onActivate: (id: Long, isActive: Boolean) -> Unit,
     onDelete: () -> Unit,
     onDayOfWeekButtonClick: (DayOfWeek, Boolean) -> Unit,
     onTimeSet: (Alarm) -> Unit,
@@ -88,6 +90,7 @@ fun AlarmCard(
                 Text(text = "水")
                 Text(text = "木")
             }
+            Switch(checked = alarm.isActive, onCheckedChange = { onActivate(alarm.id, it) })
             AnimatedVisibility(
                 visible = state.isExpanded(),
                 enter = fadeIn(animationSpec = tween(delayMillis = 300)) + expandVertically()
@@ -205,6 +208,7 @@ fun AlarmCardPreview1() {
         onDelete = {},
         onClick = {},
         onDayOfWeekButtonClick = { _, _ -> },
+        onActivate = { _, _ -> },
         onTimeSet = {}
     )
 }
@@ -214,7 +218,13 @@ fun AlarmCardPreview1() {
 fun AlarmCardPreview2() {
     val alarm by remember {
         mutableStateOf(
-            Alarm(id = 0, hour = 9, minute = 0)
+            Alarm(
+                id = 0,
+                hour = 9,
+                minute = 0,
+                dayOfWeek = setOf(DayOfWeek.MONDAY),
+                isActive = true
+            )
         )
     }
 
@@ -224,6 +234,7 @@ fun AlarmCardPreview2() {
         onDelete = {},
         onClick = {},
         onDayOfWeekButtonClick = { _, _ -> },
+        onActivate = { _, _ -> },
         onTimeSet = {}
     )
 }

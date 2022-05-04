@@ -53,6 +53,13 @@ class AlarmViewModel @Inject constructor(
         }
     }
 
+    fun updateActive(id: Long, isActive: Boolean) {
+        viewModelScope.launch {
+            val alarm = alarmRepository.find(id)?.copy(isActive = isActive) ?: return@launch
+            alarmRepository.update(alarm)
+        }
+    }
+
     fun update(alarm: Alarm) {
         viewModelScope.launch {
             alarmRepository.update(alarm)

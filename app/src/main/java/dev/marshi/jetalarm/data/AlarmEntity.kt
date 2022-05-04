@@ -17,6 +17,7 @@ data class AlarmEntity(
     @ColumnInfo(name = "inserted_at") val insertedAt: Long = 0L,
     @ColumnInfo(name = "udpated_at") val updatedAt: Long = 0L,
     @ColumnInfo(name = "day_of_week") @IntRange(from = 0, to = 127) val dayOfWeek: Int = 0,
+    @ColumnInfo(name = "active") val active: Boolean = false,
 ) {
 
     companion object {
