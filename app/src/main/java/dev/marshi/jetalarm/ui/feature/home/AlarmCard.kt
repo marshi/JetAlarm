@@ -97,7 +97,7 @@ fun AlarmCard(
             ) {
                 Column {
                     DayOfWeeks(
-                        dayOfWeeks = alarm.dayOfWeek,
+                        dayOfWeeks = alarm.dayOfWeeks,
                         onDayOfWeekClick = onDayOfWeekButtonClick,
                     )
                     IconButton(onClick = onDelete) {
@@ -216,7 +216,7 @@ fun AlarmCardPreview2() {
                 id = "0",
                 hour = 9,
                 minute = 0,
-                dayOfWeek = setOf(DayOfWeek.MONDAY),
+                dayOfWeeks = setOf(DayOfWeek.MONDAY),
                 isActive = true
             )
         )

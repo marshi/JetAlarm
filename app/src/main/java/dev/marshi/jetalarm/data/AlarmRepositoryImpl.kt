@@ -22,7 +22,7 @@ class AlarmRepositoryImpl @Inject constructor(
         val entity = dao.find(alarm.id)?.copy(
             hour = alarm.hour,
             minute = alarm.minute,
-            dayOfWeek = alarm.dayOfWeek.toNumeric(),
+            dayOfWeek = alarm.dayOfWeeks.toNumeric(),
             active = alarm.isActive,
         ) ?: return@withContext
         dao.update(entity)

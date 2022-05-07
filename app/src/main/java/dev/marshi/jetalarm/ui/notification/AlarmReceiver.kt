@@ -29,7 +29,6 @@ class AlarmReceiver() : BroadcastReceiver() {
         const val KEY_BUNDLE = "alarm_receiver_bundle"
     }
 
-
     @Inject
     lateinit var scope: SingletonScope
 
@@ -46,7 +45,7 @@ class AlarmReceiver() : BroadcastReceiver() {
             val alarm = alarmRepository.find(alarmBundle.id) ?: return@launch
             JetAlarmManager.setNextAlarm(context, alarm)
             val nowDayOfWeek = LocalDateTime.now().dayOfWeek
-            if (!alarm.dayOfWeek.contains(nowDayOfWeek)) {
+            if (!alarm.enabledOn(nowDayOfWeek)) {
                 return@launch
             }
             createNotificationChannel()

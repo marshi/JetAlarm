@@ -44,11 +44,11 @@ class AlarmViewModel @Inject constructor(
         viewModelScope.launch {
             val alarm = alarmRepository.find(id) ?: return@launch
             val newDayOfWeek = if (active) {
-                alarm.dayOfWeek + dayOfWeek
+                alarm.dayOfWeeks + dayOfWeek
             } else {
-                alarm.dayOfWeek - dayOfWeek
+                alarm.dayOfWeeks - dayOfWeek
             }
-            val updateAlarm = alarm.copy(dayOfWeek = newDayOfWeek)
+            val updateAlarm = alarm.copy(dayOfWeeks = newDayOfWeek)
             alarmRepository.update(updateAlarm)
         }
     }

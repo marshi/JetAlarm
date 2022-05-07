@@ -13,7 +13,7 @@ data class Alarm(
     val id: String = UUID.randomUUID().toString(),
     val hour: Int = 0,
     val minute: Int = 0,
-    val dayOfWeek: Set<DayOfWeek> = emptySet(),
+    val dayOfWeeks: Set<DayOfWeek> = emptySet(),
     val isActive: Boolean = false,
 ) {
     companion object {
@@ -29,7 +29,7 @@ data class Alarm(
                 id = entity.id,
                 hour = entity.hour,
                 minute = entity.minute,
-                dayOfWeek = dayOfWeekFrom(entity.dayOfWeek),
+                dayOfWeeks = dayOfWeekFrom(entity.dayOfWeek),
                 isActive = entity.active,
             )
         }
@@ -60,6 +60,10 @@ data class Alarm(
             return cal.timeInMillis
         }
 
+    fun enabledOn(dayOfWeek: DayOfWeek): Boolean {
+        return dayOfWeeks.contains(dayOfWeek)
+    }
+
     fun toEntity(): AlarmEntity {
         val now = Date().time
         return AlarmEntity(
@@ -68,7 +72,7 @@ data class Alarm(
             minute = minute,
             insertedAt = now,
             updatedAt = now,
-            dayOfWeek = dayOfWeek.toNumeric(),
+            dayOfWeek = dayOfWeeks.toNumeric(),
             active = isActive
         )
     }
