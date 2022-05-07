@@ -23,5 +23,5 @@ interface AlarmDao {
     fun list(): Flow<List<AlarmEntity>>
 
     @Query("select * from AlarmEntity where id = :id")
-    fun find(id: Long): AlarmEntity?
+    fun find(id: String): AlarmEntity?
 }

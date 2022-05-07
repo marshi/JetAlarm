@@ -4,14 +4,13 @@ import androidx.annotation.IntRange
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import dev.marshi.jetalarm.ui.model.Alarm
 import java.sql.Timestamp
 import java.time.LocalTime
 import java.util.*
 
 @Entity
 data class AlarmEntity(
-    @PrimaryKey val id: Long = UUID.randomUUID().mostSignificantBits,
+    @PrimaryKey val id: String = UUID.randomUUID().toString(),
     @ColumnInfo(name = "hour") val hour: Int = 0,
     @ColumnInfo(name = "minute") val minute: Int = 0,
     @ColumnInfo(name = "inserted_at") val insertedAt: Long = 0L,

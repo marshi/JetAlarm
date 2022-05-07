@@ -1,5 +1,6 @@
-package dev.marshi.jetalarm.ui.model
+package dev.marshi.jetalarm.domain.model
 
+import android.icu.util.Calendar
 import dev.marshi.jetalarm.data.AlarmEntity
 import dev.marshi.jetalarm.extensions.dayOfWeekFrom
 import dev.marshi.jetalarm.extensions.toNumeric
@@ -9,7 +10,7 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 
 data class Alarm(
-    val id: Long = UUID.randomUUID().mostSignificantBits,
+    val id: String = UUID.randomUUID().toString(),
     val hour: Int = 0,
     val minute: Int = 0,
     val dayOfWeek: Set<DayOfWeek> = emptySet(),
@@ -37,6 +38,27 @@ data class Alarm(
     private val localTime = LocalTime.of(hour, minute)
 
     val timeStr: String = localTime.format(formatter)
+
+    val timeInMillis: Long
+        get() {
+            val cal = Calendar.getInstance().apply {
+                timeInMillis = System.currentTimeMillis()
+                set(Calendar.HOUR_OF_DAY, this@Alarm.hour)
+                set(Calendar.MINUTE, this@Alarm.minute)
+                set(Calendar.SECOND, 0)
+                set(Calendar.MILLISECOND, 0)
+            }
+            return cal.timeInMillis
+        }
+
+    val nextDayTimeInMillis: Long
+        get() {
+            val cal = Calendar.getInstance().apply {
+                this.timeInMillis = this@Alarm.timeInMillis
+                add(Calendar.DAY_OF_MONTH, 1)
+            }
+            return cal.timeInMillis
+        }
 
     fun toEntity(): AlarmEntity {
         val now = Date().time

@@ -40,8 +40,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.ExperimentalUnitApi
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import dev.marshi.jetalarm.domain.model.Alarm
 import dev.marshi.jetalarm.ui.editalarm.showTimePicker
-import dev.marshi.jetalarm.ui.model.Alarm
 import java.time.DayOfWeek
 import java.time.format.TextStyle
 import java.util.*
@@ -58,7 +58,7 @@ fun AlarmCard(
     initialExpanded: Boolean = false,
     backgroundColor: Color = MaterialTheme.colors.surface,
     onClick: (Boolean) -> Unit,
-    onActivate: (id: Long, isActive: Boolean) -> Unit,
+    onActivate: (id: String, isActive: Boolean) -> Unit,
     onDelete: () -> Unit,
     onDayOfWeekButtonClick: (DayOfWeek, Boolean) -> Unit,
     onTimeSet: (Alarm) -> Unit,
@@ -112,10 +112,6 @@ fun AlarmCard(
     }
 }
 
-interface DayOfWeekButtonListener {
-    fun onDayOfWeekButtonClick(dayOfWeek: DayOfWeek, active: Boolean)
-}
-
 @Composable
 fun DayOfWeekButton(
     dayOfWeek: DayOfWeek,
@@ -138,8 +134,6 @@ fun DayOfWeekButton(
         Text(text = dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.JAPANESE), fontSize = 11.sp)
     }
 }
-
-interface DayOfWeeksListener : DayOfWeekButtonListener
 
 @Composable
 fun DayOfWeeks(
@@ -203,7 +197,7 @@ data class AlarmCardState(
 @Composable
 fun AlarmCardPreview1() {
     AlarmCard(
-        alarm = Alarm(id = 0L, hour = 9, minute = 0),
+        alarm = Alarm(id = "0", hour = 9, minute = 0),
         initialExpanded = false,
         onDelete = {},
         onClick = {},
@@ -219,7 +213,7 @@ fun AlarmCardPreview2() {
     val alarm by remember {
         mutableStateOf(
             Alarm(
-                id = 0,
+                id = "0",
                 hour = 9,
                 minute = 0,
                 dayOfWeek = setOf(DayOfWeek.MONDAY),

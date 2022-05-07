@@ -26,7 +26,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import dev.marshi.jetalarm.ui.model.Alarm
+import dev.marshi.jetalarm.domain.model.Alarm
 import java.time.DayOfWeek
 
 @Composable
@@ -50,8 +50,8 @@ fun AlarmListScreen(
 fun AlarmListScreen(
     state: AlarmListState,
     onDelete: (Alarm) -> Unit,
-    onDayOfWeekClick: (id: Long, dayOfWeek: DayOfWeek, active: Boolean) -> Unit,
-    onActivate: (id: Long, isActive: Boolean) -> Unit,
+    onDayOfWeekClick: (id: String, dayOfWeek: DayOfWeek, active: Boolean) -> Unit,
+    onActivate: (id: String, isActive: Boolean) -> Unit,
     onTimeSet: (Alarm) -> Unit,
 ) {
     Surface {
@@ -71,12 +71,12 @@ fun AlarmListScreen(
 fun AlarmList(
     alarms: List<Alarm>,
     onDelete: (alarm: Alarm) -> Unit,
-    onDayOfWeekClicked: (id: Long, DayOfWeek, Boolean) -> Unit,
-    onActivate: (id: Long, isActive: Boolean) -> Unit,
+    onDayOfWeekClicked: (id: String, DayOfWeek, Boolean) -> Unit,
+    onActivate: (id: String, isActive: Boolean) -> Unit,
     onTimeSet: (Alarm) -> Unit,
 ) {
     val lazyListState = rememberLazyListState()
-    val isExpandedSet = remember { mutableSetOf<Long>() }
+    val isExpandedSet = remember { mutableSetOf<String>() }
     var prevSize by remember { mutableStateOf(alarms.size) }
     val isAdded by derivedStateOf {
         val isAdded = prevSize < alarms.size
@@ -130,9 +130,9 @@ fun AlarmListScreenPreview() {
         mutableStateOf(
             AlarmListState(
                 alarms = listOf(
-                    Alarm(id = 1, hour = 9, minute = 0),
-                    Alarm(id = 2, hour = 10, minute = 0),
-                    Alarm(id = 3, hour = 11, minute = 0),
+                    Alarm(id = "1", hour = 9, minute = 0),
+                    Alarm(id = "2", hour = 10, minute = 0),
+                    Alarm(id = "3", hour = 11, minute = 0),
                 )
             )
         )
@@ -151,9 +151,9 @@ fun AlarmListScreenPreview() {
 fun AlarmListPreview() {
     val alarms = remember {
         mutableStateListOf(
-            Alarm(id = 1, hour = 9, minute = 0),
-            Alarm(id = 2, hour = 10, minute = 0),
-            Alarm(id = 3, hour = 11, minute = 0),
+            Alarm(id = "1", hour = 9, minute = 0),
+            Alarm(id = "2", hour = 10, minute = 0),
+            Alarm(id = "3", hour = 11, minute = 0),
         )
     }
     Scaffold(
