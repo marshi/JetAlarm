@@ -1,10 +1,10 @@
-package dev.marshi.jetalarm.ui.home
+package dev.marshi.jetalarm.ui.feature.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.marshi.jetalarm.data.AlarmRepository
-import dev.marshi.jetalarm.ui.model.Alarm
+import dev.marshi.jetalarm.domain.model.Alarm
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
@@ -40,16 +40,23 @@ class AlarmViewModel @Inject constructor(
         }
     }
 
-    fun updateDayOfWeek(id: Long, dayOfWeek: DayOfWeek, active: Boolean) {
+    fun updateDayOfWeek(id: String, dayOfWeek: DayOfWeek, active: Boolean) {
         viewModelScope.launch {
             val alarm = alarmRepository.find(id) ?: return@launch
             val newDayOfWeek = if (active) {
-                alarm.dayOfWeek + dayOfWeek
+                alarm.dayOfWeeks + dayOfWeek
             } else {
-                alarm.dayOfWeek - dayOfWeek
+                alarm.dayOfWeeks - dayOfWeek
             }
-            val updateAlarm = alarm.copy(dayOfWeek = newDayOfWeek)
+            val updateAlarm = alarm.copy(dayOfWeeks = newDayOfWeek)
             alarmRepository.update(updateAlarm)
+        }
+    }
+
+    fun updateActive(id: String, isActive: Boolean) {
+        viewModelScope.launch {
+            val alarm = alarmRepository.find(id)?.copy(isActive = isActive) ?: return@launch
+            alarmRepository.update(alarm)
         }
     }
 

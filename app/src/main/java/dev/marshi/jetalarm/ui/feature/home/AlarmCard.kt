@@ -1,4 +1,4 @@
-package dev.marshi.jetalarm.ui.home
+package dev.marshi.jetalarm.ui.feature.home
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -22,6 +22,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Switch
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
@@ -39,8 +40,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.ExperimentalUnitApi
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import dev.marshi.jetalarm.domain.model.Alarm
 import dev.marshi.jetalarm.ui.editalarm.showTimePicker
-import dev.marshi.jetalarm.ui.model.Alarm
 import java.time.DayOfWeek
 import java.time.format.TextStyle
 import java.util.*
@@ -57,6 +58,7 @@ fun AlarmCard(
     initialExpanded: Boolean = false,
     backgroundColor: Color = MaterialTheme.colors.surface,
     onClick: (Boolean) -> Unit,
+    onActivate: (id: String, isActive: Boolean) -> Unit,
     onDelete: () -> Unit,
     onDayOfWeekButtonClick: (DayOfWeek, Boolean) -> Unit,
     onTimeSet: (Alarm) -> Unit,
@@ -88,13 +90,14 @@ fun AlarmCard(
                 Text(text = "水")
                 Text(text = "木")
             }
+            Switch(checked = alarm.isActive, onCheckedChange = { onActivate(alarm.id, it) })
             AnimatedVisibility(
                 visible = state.isExpanded(),
                 enter = fadeIn(animationSpec = tween(delayMillis = 300)) + expandVertically()
             ) {
                 Column {
                     DayOfWeeks(
-                        dayOfWeeks = alarm.dayOfWeek,
+                        dayOfWeeks = alarm.dayOfWeeks,
                         onDayOfWeekClick = onDayOfWeekButtonClick,
                     )
                     IconButton(onClick = onDelete) {
@@ -107,10 +110,6 @@ fun AlarmCard(
             }
         }
     }
-}
-
-interface DayOfWeekButtonListener {
-    fun onDayOfWeekButtonClick(dayOfWeek: DayOfWeek, active: Boolean)
 }
 
 @Composable
@@ -135,8 +134,6 @@ fun DayOfWeekButton(
         Text(text = dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.JAPANESE), fontSize = 11.sp)
     }
 }
-
-interface DayOfWeeksListener : DayOfWeekButtonListener
 
 @Composable
 fun DayOfWeeks(
@@ -200,11 +197,12 @@ data class AlarmCardState(
 @Composable
 fun AlarmCardPreview1() {
     AlarmCard(
-        alarm = Alarm(id = 0L, hour = 9, minute = 0),
+        alarm = Alarm(id = "0", hour = 9, minute = 0),
         initialExpanded = false,
         onDelete = {},
         onClick = {},
         onDayOfWeekButtonClick = { _, _ -> },
+        onActivate = { _, _ -> },
         onTimeSet = {}
     )
 }
@@ -214,7 +212,13 @@ fun AlarmCardPreview1() {
 fun AlarmCardPreview2() {
     val alarm by remember {
         mutableStateOf(
-            Alarm(id = 0, hour = 9, minute = 0)
+            Alarm(
+                id = "0",
+                hour = 9,
+                minute = 0,
+                dayOfWeeks = setOf(DayOfWeek.MONDAY),
+                isActive = true
+            )
         )
     }
 
@@ -224,6 +228,7 @@ fun AlarmCardPreview2() {
         onDelete = {},
         onClick = {},
         onDayOfWeekButtonClick = { _, _ -> },
+        onActivate = { _, _ -> },
         onTimeSet = {}
     )
 }

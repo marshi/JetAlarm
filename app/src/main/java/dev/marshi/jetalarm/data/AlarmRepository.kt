@@ -1,6 +1,6 @@
 package dev.marshi.jetalarm.data
 
-import dev.marshi.jetalarm.ui.model.Alarm
+import dev.marshi.jetalarm.domain.model.Alarm
 import kotlinx.coroutines.flow.Flow
 
 interface AlarmRepository {
@@ -10,7 +10,7 @@ interface AlarmRepository {
 
     suspend fun remove(alarm: Alarm)
 
-    suspend fun find(id: Long): Alarm?
+    suspend fun find(id: String): Alarm?
 
     fun list(): Flow<List<Alarm>>
 
