@@ -6,11 +6,10 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.sql.Timestamp
 import java.time.LocalTime
-import java.util.*
 
 @Entity
 data class AlarmEntity(
-    @PrimaryKey val id: String = UUID.randomUUID().toString(),
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
     @ColumnInfo(name = "hour") val hour: Int = 0,
     @ColumnInfo(name = "minute") val minute: Int = 0,
     @ColumnInfo(name = "inserted_at") val insertedAt: Long = 0L,

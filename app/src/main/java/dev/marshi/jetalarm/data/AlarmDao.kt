@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 interface AlarmDao {
 
     @Insert
-    suspend fun insert(entity: AlarmEntity)
+    suspend fun insert(entity: AlarmEntity): Long
 
     @Update
     suspend fun update(entity: AlarmEntity)
@@ -23,5 +23,5 @@ interface AlarmDao {
     fun list(): Flow<List<AlarmEntity>>
 
     @Query("select * from AlarmEntity where id = :id")
-    fun find(id: String): AlarmEntity?
+    fun find(id: Int): AlarmEntity?
 }

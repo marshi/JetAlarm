@@ -50,8 +50,8 @@ fun AlarmListScreen(
 fun AlarmListScreen(
     state: AlarmListState,
     onDelete: (Alarm) -> Unit,
-    onDayOfWeekClick: (id: String, dayOfWeek: DayOfWeek, active: Boolean) -> Unit,
-    onActivate: (id: String, isActive: Boolean) -> Unit,
+    onDayOfWeekClick: (id: Int, dayOfWeek: DayOfWeek, active: Boolean) -> Unit,
+    onActivate: (id: Int, isActive: Boolean) -> Unit,
     onTimeSet: (Alarm) -> Unit,
 ) {
     Surface {
@@ -71,12 +71,12 @@ fun AlarmListScreen(
 fun AlarmList(
     alarms: List<Alarm>,
     onDelete: (alarm: Alarm) -> Unit,
-    onDayOfWeekClicked: (id: String, DayOfWeek, Boolean) -> Unit,
-    onActivate: (id: String, isActive: Boolean) -> Unit,
+    onDayOfWeekClicked: (id: Int, DayOfWeek, Boolean) -> Unit,
+    onActivate: (id: Int, isActive: Boolean) -> Unit,
     onTimeSet: (Alarm) -> Unit,
 ) {
     val lazyListState = rememberLazyListState()
-    val isExpandedSet = remember { mutableSetOf<String>() }
+    val isExpandedSet = remember { mutableSetOf<Int>() }
     var prevSize by remember { mutableStateOf(alarms.size) }
     val isAdded by derivedStateOf {
         val isAdded = prevSize < alarms.size
@@ -130,9 +130,9 @@ fun AlarmListScreenPreview() {
         mutableStateOf(
             AlarmListState(
                 alarms = listOf(
-                    Alarm(id = "1", hour = 9, minute = 0),
-                    Alarm(id = "2", hour = 10, minute = 0),
-                    Alarm(id = "3", hour = 11, minute = 0),
+                    Alarm(id = 1, hour = 9, minute = 0),
+                    Alarm(id = 2, hour = 10, minute = 0),
+                    Alarm(id = 3, hour = 11, minute = 0),
                 )
             )
         )
@@ -151,16 +151,16 @@ fun AlarmListScreenPreview() {
 fun AlarmListPreview() {
     val alarms = remember {
         mutableStateListOf(
-            Alarm(id = "1", hour = 9, minute = 0),
-            Alarm(id = "2", hour = 10, minute = 0),
-            Alarm(id = "3", hour = 11, minute = 0),
+            Alarm(id = 1, hour = 9, minute = 0),
+            Alarm(id = 2, hour = 10, minute = 0),
+            Alarm(id = 3, hour = 11, minute = 0),
         )
     }
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    alarms.add(Alarm.now())
+//                    alarms.add(Alarm())
                 }
             ) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = null)

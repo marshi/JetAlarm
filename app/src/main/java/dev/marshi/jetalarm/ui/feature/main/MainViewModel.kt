@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.marshi.jetalarm.data.AlarmRepository
-import dev.marshi.jetalarm.domain.model.Alarm
+import dev.marshi.jetalarm.domain.model.NoIdAlarm
 import dev.marshi.jetalarm.ui.util.JetAlarmManager
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -19,9 +19,11 @@ class MainViewModel @Inject constructor(
 
     fun addAlarm(hour: Int, minute: Int) {
         viewModelScope.launch {
-            val alarm = Alarm(hour = hour, minute = minute, isActive = true)
-            alarmRepository.insert(alarm)
-            JetAlarmManager.setAlarm(context, alarm)
+            val noIdAlarm = NoIdAlarm(hour = hour, minute = minute, isActive = true)
+            val id = alarmRepository.insert(noIdAlarm)
+            alarmRepository.find(id)?.let { alarm ->
+                JetAlarmManager.setAlarm(context, alarm)
+            }
         }
     }
 }
