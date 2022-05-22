@@ -58,7 +58,7 @@ fun AlarmCard(
     initialExpanded: Boolean = false,
     backgroundColor: Color = MaterialTheme.colors.surface,
     onClick: (Boolean) -> Unit,
-    onActivate: (id: String, isActive: Boolean) -> Unit,
+    onActivate: (id: Int, isActive: Boolean) -> Unit,
     onDelete: () -> Unit,
     onDayOfWeekButtonClick: (DayOfWeek, Boolean) -> Unit,
     onTimeSet: (Alarm) -> Unit,
@@ -197,7 +197,7 @@ data class AlarmCardState(
 @Composable
 fun AlarmCardPreview1() {
     AlarmCard(
-        alarm = Alarm(id = "0", hour = 9, minute = 0),
+        alarm = Alarm(id = 0, hour = 9, minute = 0),
         initialExpanded = false,
         onDelete = {},
         onClick = {},
@@ -213,7 +213,7 @@ fun AlarmCardPreview2() {
     val alarm by remember {
         mutableStateOf(
             Alarm(
-                id = "0",
+                id = 0,
                 hour = 9,
                 minute = 0,
                 dayOfWeeks = setOf(DayOfWeek.MONDAY),

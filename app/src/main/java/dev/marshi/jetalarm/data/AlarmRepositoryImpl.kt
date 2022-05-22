@@ -1,6 +1,7 @@
 package dev.marshi.jetalarm.data
 
 import dev.marshi.jetalarm.domain.model.Alarm
+import dev.marshi.jetalarm.domain.model.NoIdAlarm
 import dev.marshi.jetalarm.extensions.toNumeric
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -13,9 +14,9 @@ class AlarmRepositoryImpl @Inject constructor(
     private val dao: AlarmDao
 ) : AlarmRepository {
 
-    override suspend fun insert(alarm: Alarm) = withContext(Dispatchers.IO) {
+    override suspend fun insert(alarm: NoIdAlarm): Int = withContext(Dispatchers.IO) {
         val entity = alarm.toEntity()
-        dao.insert(entity = entity)
+        dao.insert(entity = entity).toInt()
     }
 
     override suspend fun update(alarm: Alarm) = withContext(Dispatchers.IO) {
@@ -34,7 +35,7 @@ class AlarmRepositoryImpl @Inject constructor(
         }.flowOn(Dispatchers.IO)
     }
 
-    override suspend fun find(id: String): Alarm? = withContext(Dispatchers.IO) {
+    override suspend fun find(id: Int): Alarm? = withContext(Dispatchers.IO) {
         dao.find(id)?.let { entity ->
             Alarm.from(entity)
         }

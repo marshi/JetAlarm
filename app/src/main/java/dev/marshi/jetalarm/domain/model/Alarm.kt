@@ -10,7 +10,7 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 
 data class Alarm(
-    val id: String = UUID.randomUUID().toString(),
+    val id: Int,
     val hour: Int = 0,
     val minute: Int = 0,
     val dayOfWeeks: Set<DayOfWeek> = emptySet(),
@@ -19,10 +19,6 @@ data class Alarm(
     companion object {
         private val formatter = DateTimeFormatter.ofPattern("HH:mm")
 
-        fun now(): Alarm {
-            val now = LocalTime.now()
-            return Alarm(hour = now.hour, minute = now.minute)
-        }
 
         fun from(entity: AlarmEntity): Alarm {
             return Alarm(
@@ -34,6 +30,14 @@ data class Alarm(
             )
         }
     }
+
+    constructor(id: Int, noIdAlarm: NoIdAlarm) : this(
+        id = id,
+        hour = noIdAlarm.hour,
+        minute = noIdAlarm.minute,
+        dayOfWeeks = noIdAlarm.dayOfWeeks,
+        isActive = noIdAlarm.isActive,
+    )
 
     private val localTime = LocalTime.of(hour, minute)
 
@@ -63,11 +67,24 @@ data class Alarm(
     fun enabledOn(dayOfWeek: DayOfWeek): Boolean {
         return dayOfWeeks.contains(dayOfWeek)
     }
+}
+
+data class NoIdAlarm(
+    val hour: Int = 0,
+    val minute: Int = 0,
+    val dayOfWeeks: Set<DayOfWeek> = emptySet(),
+    val isActive: Boolean = false,
+) {
+    companion object {
+        fun now(): NoIdAlarm {
+            val now = LocalTime.now()
+            return NoIdAlarm(hour = now.hour, minute = now.minute)
+        }
+    }
 
     fun toEntity(): AlarmEntity {
         val now = Date().time
         return AlarmEntity(
-            id = id,
             hour = hour,
             minute = minute,
             insertedAt = now,
