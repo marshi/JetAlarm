@@ -3,6 +3,7 @@
     package="dev.marshi.jetalarm">
 
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
         android:name=".App"
@@ -26,6 +27,8 @@
         <receiver
             android:name=".ui.notification.AlarmReceiver"
             android:exported="false" />
+
+        <service android:name=".ui.service.AlarmService" />
     </application>
 
 </manifest>

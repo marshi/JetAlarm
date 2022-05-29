@@ -41,7 +41,7 @@ object JetAlarmManager {
         val intent = createIntent(context, id)
         val pendingIntent = PendingIntent.getBroadcast(
             context,
-            id,
+            AlarmReceiver.REQUEST_START,
             intent,
             PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
         )
@@ -52,7 +52,7 @@ object JetAlarmManager {
 
     private fun createIntent(context: Context, id: Int): Intent {
         return Intent(context, AlarmReceiver::class.java).apply {
-            putExtra(AlarmReceiver.KEY_BUNDLE, AlarmReceiverBundle(id = id))
+            putExtra(AlarmReceiver.KEY_BUNDLE, AlarmReceiverBundle.StartAlarm(id = id))
         }
     }
 }
