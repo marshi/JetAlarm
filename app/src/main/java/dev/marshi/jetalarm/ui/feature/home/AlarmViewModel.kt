@@ -1,14 +1,11 @@
 package dev.marshi.jetalarm.ui.feature.home
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.marshi.jetalarm.data.AlarmRepository
 import dev.marshi.jetalarm.domain.model.Alarm
 import dev.marshi.jetalarm.domain.model.NoIdAlarm
-import dev.marshi.jetalarm.ui.util.JetAlarmManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
@@ -20,7 +17,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AlarmViewModel @Inject constructor(
-    @ApplicationContext private val context: Context,
     private val alarmRepository: AlarmRepository,
 ) : ViewModel() {
 
@@ -36,7 +32,6 @@ class AlarmViewModel @Inject constructor(
     fun remove(alarm: Alarm) {
         viewModelScope.launch {
             alarmRepository.remove(alarm)
-            JetAlarmManager.deleteAlarm(context, alarm.id)
         }
     }
 

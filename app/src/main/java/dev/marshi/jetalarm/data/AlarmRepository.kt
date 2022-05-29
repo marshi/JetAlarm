@@ -15,4 +15,5 @@ interface AlarmRepository {
 
     fun list(): Flow<List<Alarm>>
 
+    fun latest(): Flow<Alarm?>
 }

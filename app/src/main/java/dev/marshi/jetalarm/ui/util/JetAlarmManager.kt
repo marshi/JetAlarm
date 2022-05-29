@@ -18,13 +18,13 @@ object JetAlarmManager {
         setAlarm(context, alarm.id, alarm.nextDayTimeInMillis)
     }
 
-    private fun setAlarm(context: Context, id: Int, timeInMillis: Long) {
+    private fun setAlarm(context: Context, alarmId: Int, timeInMillis: Long) {
         val alarmManager =
             context.getSystemService(Context.ALARM_SERVICE) as? AlarmManager ?: return
-        val intent = createIntent(context = context, id)
+        val intent = createIntent(context = context, alarmId)
         val pendingIntent = PendingIntent.getBroadcast(
             context,
-            id,
+            alarmId,
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
@@ -35,13 +35,12 @@ object JetAlarmManager {
         )
     }
 
-
-    fun deleteAlarm(context: Context, id: Int) {
+    fun deleteAlarm(context: Context, alarm: Alarm) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as? AlarmManager
-        val intent = createIntent(context, id)
+        val intent = createIntent(context, alarm.id)
         val pendingIntent = PendingIntent.getBroadcast(
             context,
-            AlarmReceiver.REQUEST_START,
+            alarm.id,
             intent,
             PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
         )

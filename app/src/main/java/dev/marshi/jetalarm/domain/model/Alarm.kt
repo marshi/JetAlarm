@@ -19,7 +19,6 @@ data class Alarm(
     companion object {
         private val formatter = DateTimeFormatter.ofPattern("HH:mm")
 
-
         fun from(entity: AlarmEntity): Alarm {
             return Alarm(
                 id = entity.id,
@@ -82,7 +81,7 @@ data class NoIdAlarm(
         }
     }
 
-    fun toEntity(): AlarmEntity {
+    fun toNewEntity(): AlarmEntity {
         val now = Date().time
         return AlarmEntity(
             hour = hour,

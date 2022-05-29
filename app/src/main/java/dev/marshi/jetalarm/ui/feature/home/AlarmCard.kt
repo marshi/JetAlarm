@@ -1,7 +1,6 @@
 package dev.marshi.jetalarm.ui.feature.home
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -37,7 +36,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.ExperimentalUnitApi
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.marshi.jetalarm.domain.model.Alarm
@@ -47,9 +45,7 @@ import java.time.format.TextStyle
 import java.util.*
 
 @OptIn(
-    ExperimentalUnitApi::class,
     ExperimentalMaterialApi::class,
-    ExperimentalAnimationApi::class
 )
 @Composable
 fun AlarmCard(
