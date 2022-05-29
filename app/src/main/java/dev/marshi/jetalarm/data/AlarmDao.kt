@@ -22,6 +22,9 @@ interface AlarmDao {
     @Query("select * from AlarmEntity order by inserted_at desc")
     fun list(): Flow<List<AlarmEntity>>
 
+    @Query("select * from AlarmEntity order by updated_at desc limit 1 ")
+    fun latest(): Flow<AlarmEntity?>
+
     @Query("select * from AlarmEntity where id = :id")
     fun find(id: Int): AlarmEntity?
 }
