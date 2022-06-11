@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -17,9 +18,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Card
+import androidx.compose.material.ContentAlpha
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Switch
 import androidx.compose.material.Text
@@ -28,14 +31,18 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.marshi.jetalarm.domain.model.Alarm
@@ -81,27 +88,27 @@ fun AlarmCard(
             modifier = Modifier.padding(horizontal = 16.dp)
         ) {
             AlarmTime(alarm = alarm, onTimeSet = onTimeSet)
-            Row {
-                Text(text = "月")
-                Text(text = "水")
-                Text(text = "木")
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                DayOfWeekAnnotation(alarm = alarm)
+                Spacer(modifier = Modifier.weight(1f))
+                Switch(
+                    checked = alarm.isActive,
+                    onCheckedChange = { onActivate(alarm.id, it) }
+                )
             }
-            Switch(checked = alarm.isActive, onCheckedChange = { onActivate(alarm.id, it) })
             AnimatedVisibility(
                 visible = state.isExpanded(),
                 enter = fadeIn(animationSpec = tween(delayMillis = 300)) + expandVertically()
             ) {
                 Column {
-                    DayOfWeeks(
+                    DayOfWeekButtons(
                         dayOfWeeks = alarm.dayOfWeeks,
+                        enabled = alarm.isActive,
                         onDayOfWeekClick = onDayOfWeekButtonClick,
                     )
-                    IconButton(onClick = onDelete) {
-                        Icon(
-                            imageVector = Icons.Default.Delete,
-                            contentDescription = "delete this alarm"
-                        )
-                    }
+                    DeleteButton(onDelete = onDelete)
                 }
             }
         }
@@ -111,6 +118,7 @@ fun AlarmCard(
 @Composable
 fun DayOfWeekButton(
     dayOfWeek: DayOfWeek,
+    enabled: Boolean,
     active: Boolean,
     onClick: (DayOfWeek) -> Unit,
 ) {
@@ -118,6 +126,7 @@ fun DayOfWeekButton(
         modifier = Modifier.size(24.dp),
         shape = CircleShape,
         contentPadding = PaddingValues(0.dp),
+        enabled = enabled,
         colors = ButtonDefaults.buttonColors(
             backgroundColor = if (active) {
                 Color.Green
@@ -132,18 +141,20 @@ fun DayOfWeekButton(
 }
 
 @Composable
-fun DayOfWeeks(
+fun DayOfWeekButtons(
+    enabled: Boolean = true,
     dayOfWeeks: Set<DayOfWeek>,
     onDayOfWeekClick: (DayOfWeek, Boolean) -> Unit,
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceEvenly
+        horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         DayOfWeek.values().forEachIndexed { i, dayOfWeek ->
             DayOfWeekButton(
                 dayOfWeek = dayOfWeek,
                 active = dayOfWeeks.contains(dayOfWeek),
+                enabled = enabled,
                 onClick = { dayOfWeek ->
                     onDayOfWeekClick(
                         dayOfWeek,
@@ -161,16 +172,56 @@ fun AlarmTime(
     onTimeSet: (Alarm) -> Unit
 ) {
     val context = LocalContext.current
-    TextButton(onClick = {
-        showTimePicker(
-            context = context,
-            hour = alarm.hour,
-            minute = alarm.minute,
-            onTimeSet = { _, hour, minute ->
-                onTimeSet(alarm.copy(hour = hour, minute = minute))
-            })
-    }) {
+    TextButton(
+        contentPadding = PaddingValues(0.dp),
+        enabled = alarm.isActive,
+        onClick = {
+            showTimePicker(
+                context = context,
+                hour = alarm.hour,
+                minute = alarm.minute,
+                onTimeSet = { _, hour, minute ->
+                    onTimeSet(alarm.copy(hour = hour, minute = minute))
+                }
+            )
+        },
+    ) {
         Text(text = alarm.timeStr, fontSize = 64.sp)
+    }
+}
+
+@Composable
+fun DayOfWeekAnnotation(alarm: Alarm) {
+    val dayOfWeeks = alarm.dayOfWeeks
+    val alpha = if (alarm.isActive) {
+        LocalContentAlpha.current
+    } else {
+        ContentAlpha.disabled
+    }
+    CompositionLocalProvider(LocalContentAlpha provides alpha) {
+        if (dayOfWeeks.isEmpty()) {
+            Text("未設定")
+        } else {
+            dayOfWeeks.mapIndexed { index, dayOfWeek ->
+                Text(text = dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.JAPANESE))
+                if (index != dayOfWeeks.size - 1) {
+                    Text("、")
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun DeleteButton(onDelete: () -> Unit) {
+    IconButton(onClick = onDelete) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                imageVector = Icons.Default.Delete,
+                contentDescription = "delete this alarm"
+            )
+            Text("削除")
+        }
     }
 }
 
@@ -189,38 +240,65 @@ data class AlarmCardState(
     }
 }
 
-@Preview(name = "shrink")
-@Composable
-fun AlarmCardPreview1() {
-    AlarmCard(
-        alarm = Alarm(id = 0, hour = 9, minute = 0),
-        initialExpanded = false,
-        onDelete = {},
-        onClick = {},
-        onDayOfWeekButtonClick = { _, _ -> },
-        onActivate = { _, _ -> },
-        onTimeSet = {}
-    )
+class AlarmCardParameter(
+    val alarm: Alarm,
+    val isExpanded: Boolean,
+)
+
+class PreviewAlarmCardParameterProvider : PreviewParameterProvider<AlarmCardParameter> {
+    override val values: Sequence<AlarmCardParameter>
+        get() = sequenceOf(
+            AlarmCardParameter(
+                alarm = Alarm(
+                    id = 0,
+                    hour = 9,
+                    dayOfWeeks = setOf(DayOfWeek.MONDAY),
+                    isActive = true
+                ),
+                isExpanded = false
+            ),
+            AlarmCardParameter(
+                alarm = Alarm(
+                    id = 0,
+                    hour = 9,
+                    minute = 0,
+                    dayOfWeeks = setOf(DayOfWeek.MONDAY),
+                    isActive = true
+                ),
+                isExpanded = true
+            ),
+            AlarmCardParameter(
+                alarm = Alarm(
+                    id = 1,
+                    hour = 19,
+                    minute = 0,
+                    dayOfWeeks = setOf(DayOfWeek.MONDAY, DayOfWeek.TUESDAY),
+                    isActive = false
+                ),
+                isExpanded = true
+            ),
+            AlarmCardParameter(
+                alarm = Alarm(
+                    id = 1,
+                    hour = 19,
+                    minute = 0,
+                    dayOfWeeks = setOf(DayOfWeek.MONDAY, DayOfWeek.TUESDAY),
+                    isActive = false
+                ),
+                isExpanded = false
+            ),
+        )
 }
 
-@Preview(name = "expand")
-@Composable
-fun AlarmCardPreview2() {
-    val alarm by remember {
-        mutableStateOf(
-            Alarm(
-                id = 0,
-                hour = 9,
-                minute = 0,
-                dayOfWeeks = setOf(DayOfWeek.MONDAY),
-                isActive = true
-            )
-        )
-    }
 
+@Preview
+@Composable
+fun AlarmCardPreview2(
+    @PreviewParameter(PreviewAlarmCardParameterProvider::class) params: AlarmCardParameter,
+) {
     AlarmCard(
-        alarm = alarm,
-        initialExpanded = true,
+        alarm = params.alarm,
+        initialExpanded = params.isExpanded,
         onDelete = {},
         onClick = {},
         onDayOfWeekButtonClick = { _, _ -> },
@@ -237,6 +315,7 @@ fun DayOfWeekButtonPreview() {
     }
     DayOfWeekButton(
         dayOfWeek = DayOfWeek.MONDAY,
+        enabled = true,
         active = state,
         onClick = { state = !state },
     )

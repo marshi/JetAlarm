@@ -45,7 +45,7 @@ class AlarmService : Service() {
         val intent = Intent(this, AlarmReceiver::class.java).apply {
             putExtra(AlarmReceiver.KEY_BUNDLE, AlarmReceiverBundle.StopAlarm)
         }
-        val pendingIntent = PendingIntent.getBroadcast(
+        val stopIntent = PendingIntent.getBroadcast(
             this,
             AlarmReceiver.REQUEST_STOP,
             intent,
@@ -56,7 +56,7 @@ class AlarmService : Service() {
             .setContentTitle("title")
             .setContentText("contenttext")
             .setSmallIcon(R.mipmap.ic_launcher)
-            .addAction(R.mipmap.ic_launcher, "action", pendingIntent)
+            .addAction(R.mipmap.ic_launcher, "STOP", stopIntent)
             .build()
         startForeground(1, notification)
         return START_STICKY
