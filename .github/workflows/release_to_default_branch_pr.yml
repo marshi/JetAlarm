@@ -2,7 +2,8 @@ name: release branch to default branch pull request
 
 on:
   push:
-    branches: 'release/*'
+    branches:
+      - 'release/*'
 jobs:
   build:
     runs-on: ubuntu-latest
