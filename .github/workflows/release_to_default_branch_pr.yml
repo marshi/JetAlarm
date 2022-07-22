@@ -1,0 +1,15 @@
+name: release branch to default branch pull request
+
+on:
+  push:
+    branches: 'release/*'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: release_to_default_branch
+        run: sh ./.github/scripts/release_to_default_branch_pr.sh
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_EVENT_PATH: ${GITHUB_EVENT_PATH}
