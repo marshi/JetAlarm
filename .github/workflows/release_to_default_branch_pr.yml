@@ -13,6 +13,7 @@ jobs:
           pwd
           ls -la
           ls -la ..
+          ls -la ./.github/scripts
           ls ./.github/scripts/release_to_default_branch_pr.sh
           sh ./.github/scripts/release_to_default_branch_pr.sh
         env:
