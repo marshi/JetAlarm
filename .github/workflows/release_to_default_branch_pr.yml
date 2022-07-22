@@ -11,8 +11,9 @@ jobs:
       - name: release_to_default_branch
         run: |
           pwd
-          ls
-          ls ..
+          ls -la
+          ls -la ..
+          ls ./.github/scripts/release_to_default_branch_pr.sh
           sh ./.github/scripts/release_to_default_branch_pr.sh
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
